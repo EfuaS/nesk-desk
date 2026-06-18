@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NextDesk Command Center — Operational overview across all ITSM modules including service requests, incidents, changes, problems, and CI health." />
+  <title>NextDesk — Command Center Dashboard</title>
+  <style>
+/* ===== RESET & BASE ===== */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap");
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Core colors */
+  --navbar-bg: #1a1d23;
+  --sidebar-bg: #ffffff;
+  --main-bg: #f3f4f8;
+  --heading-color: #111827;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+
+  /* Accent colors */
+  --blue-primary: #1a6ef5;
+  --blue-dark: #2563eb;
+  --green-primary: #22c55e;
+  --green-dark: #059669;
+  --red-primary: #ef4444;
+  --red-dark: #dc2626;
+  --yellow-primary: #ef4444;
+  --yellow-dark: #d97706;
+  --purple-primary: #8b5cf6;
+  --purple-dark: #7c3aed;
+  --teal-primary: #14b8a6;
+  --orange-primary: #f97316;
+
+  /* KPI card top-border colors */
+  --kpi-border-blue: #1a6ef5;
+
+  /* Sidebar */
+  --sidebar-width: 220px;
+  --sidebar-active-bg: #eff6ff;
+  --sidebar-active-text: #2563eb;
+  --sidebar-hover-bg: #f3f4f6;
+
+  /* Navbar */
+  --navbar-height: 56px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Sora", sans-serif;
+  background: var(--main-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: "Sora", sans-serif;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ===== LAYOUT ===== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: var(--navbar-height);
+}
+
+/* ===== TOP NAVBAR ===== */
+.top-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--navbar-height);
+  background: var(--navbar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-grid-btn {
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+
+.navbar-grid-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-search {
+  position: relative;
+  width: 240px;
+}
+
+.navbar-search input {
+  width: 100%;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 0 12px 0 36px;
+  color: #fff;
+  font-family: "Sora", sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.navbar-search input::placeholder {
+  color: #6b7280;
+}
+
+.navbar-search input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  display: flex;
+  pointer-events: none;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-icon-btn {
+  position: relative;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+
+.navbar-icon-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-icon-btn .badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 600;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+}
+
+.navbar-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-user-name {
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.navbar-user-role {
+  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.navbar-branding {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-branding-text {
+  color: #9ca3af;
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.navbar-branding-text strong {
+  color: #d1d5db;
+  font-weight: 600;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--navbar-height));
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 24px;
+}
+
+.sidebar-logo-icon {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-logo-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0 12px;
+}
+
+.sidebar-section {
+  margin-bottom: 8px;
+}
+
+.sidebar-section + .sidebar-section {
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+}
+
+.sidebar-item:hover {
+  background: var(--sidebar-hover-bg);
+  color: var(--text-primary);
+}
+
+.sidebar-item.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+  font-weight: 500;
+}
+
+.sidebar-item.active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--blue-primary);
+  border-radius: 0 3px 3px 0;
+}
+
+.sidebar-item-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-item-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 28px 32px 40px;
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-header-left h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-bottom: 6px;
+}
+
+.page-header-left p {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Date period dropdown */
+.date-filter-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-filter-icon {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.date-period-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 8px 32px 8px 34px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--text-primary);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.date-period-select:hover {
+  border-color: #D1D5DB;
+  box-shadow: var(--shadow-sm);
+}
+
+.date-period-select:focus {
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.refresh-btn:hover {
+  border-color: #D1D5DB;
+  box-shadow: var(--shadow-sm);
+}
+
+.refresh-btn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+  transition: transform 0.3s;
+}
+
+.refresh-btn.spinning svg {
+  animation: spin 0.8s linear infinite;
+}
+
+/* ===== LOADING OVERLAYS ===== */
+.page-loader-overlay {
+  display: none;
+  position: fixed;
+  top: var(--navbar-height);
+  left: var(--sidebar-width);
+  right: 0;
+  bottom: 0;
+  background: rgba(243, 244, 248, 0.82);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.page-loader-overlay.visible {
+  display: flex;
+}
+
+.table-loader-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(1px);
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+.table-loader-overlay.visible {
+  display: flex;
+}
+
+.loader-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3.5px solid var(--border-color);
+  border-top-color: var(--blue-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.loader-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== FILTER DROPDOWNS ===== */
+.filter-dropdown-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-dropdown-icon {
+  position: absolute;
+  left: 8px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 5px 26px 5px 28px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 8px center;
+  color: var(--text-secondary);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-select:hover {
+  border-color: #D1D5DB;
+}
+
+.filter-select:focus {
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-select.active-filter {
+  border-color: var(--blue-primary);
+  color: var(--blue-primary);
+  background-color: #EFF6FF;
+}
+
+/* ===== KPI CARDS ROW ===== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  border-top: 2.5px solid transparent;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-card.service {
+  border-top-color: var(--kpi-border-blue);
+}
+.kpi-card.incident {
+  border-top-color: var(--kpi-border-blue);
+}
+.kpi-card.ci {
+  border-top-color: var(--kpi-border-blue);
+}
+.kpi-card.change {
+  border-top-color: var(--kpi-border-blue);
+}
+.kpi-card.problem {
+  border-top-color: var(--kpi-border-blue);
+}
+
+.kpi-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.kpi-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-card.service .kpi-icon {
+  background: #d1fae5;
+  color: #059669;
+}
+.kpi-card.incident .kpi-icon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.kpi-card.ci .kpi-icon {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.kpi-card.change .kpi-icon {
+  background: #fef3c7;
+  color: #d97706;
+}
+.kpi-card.problem .kpi-icon {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.kpi-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.kpi-title {
+  font-size: 0.79rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--heading-color);
+  line-height: 1;
+}
+
+.kpi-change {
+  font-size: 0.75rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.kpi-change.up {
+  color: var(--green-primary);
+}
+.kpi-change.down {
+  color: var(--red-primary);
+}
+.kpi-change.awaiting {
+  color: var(--yellow-primary);
+}
+.kpi-change.critical {
+  color: var(--red-primary);
+}
+
+.kpi-link {
+  font-size: 0.78rem;
+  color: var(--blue-primary);
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.kpi-link:hover {
+  color: var(--blue-dark);
+}
+
+/* ===== CHART CARDS ===== */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px 20px;
+}
+
+.chart-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.chart-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-card-icon.service-icon {
+  background: #d1fae5;
+  color: #059669;
+}
+.chart-card-icon.incident-icon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.chart-card-icon.problem-icon {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+.chart-card-icon.ci-icon {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.chart-card-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.chart-stats {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 20px;
+}
+
+.chart-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  line-height: 1.2;
+}
+
+.chart-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.chart-stat-label.pending,
+.chart-stat-label.open {
+  color: var(--blue-primary);
+}
+.chart-stat-label.completed,
+.chart-stat-label.closed {
+  color: var(--text-secondary);
+}
+
+/* ===== BAR CHART ===== */
+.bar-chart-container {
+  position: relative;
+  height: 120px;
+  display: flex;
+  gap: 0;
+  box-shadow: var(--shadow-card);
+  border-radius: 10px;
+}
+
+.bar-chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 10px;
+  height: 100%;
+}
+
+.bar-chart-y-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: right;
+  line-height: 1;
+}
+
+.bar-chart-area {
+  flex: 1;
+  position: relative;
+  border-left: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bar-chart-gridlines {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.bar-chart-gridline {
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.bar-chart-bars {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 20px;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+}
+
+.bar-value-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bar {
+  width: 96px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bar.primary {
+  background: var(--blue-primary);
+}
+
+.bar.secondary {
+  background: #d1d5db;
+}
+
+/* ===== DONUT CHART ===== */
+.donut-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 10px 0;
+}
+
+.donut-svg-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+}
+
+.donut-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donut-svg-wrap circle {
+  transition: stroke-dasharray 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size:11px;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
+.donut-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.donut-legend-dot.active {
+  background: #10b981;
+}
+.donut-legend-dot.maintenance {
+  background: #f59e0b;
+}
+.donut-legend-dot.retired {
+  background: #9ca3af;
+}
+
+/* ===== RECENT ACTIVITIES TABLE ===== */
+.activities-section {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+.activities-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.activities-header-left h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-bottom: 4px;
+}
+
+.activities-header-left p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.activities-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  color: var(--text-primary);
+  background: #F8FAFC;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.activities-refresh-btn:hover {
+  background: var(--sidebar-hover-bg);
+}
+
+.activities-refresh-btn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+/* Tabs */
+.activities-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 10px;
+  padding-bottom: 0;
+}
+
+.activity-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.activity-tab {
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+  white-space: nowrap;
+  position: relative;
+  bottom: -1px;
+}
+
+.activity-tab:hover {
+  color: var(--text-primary);
+}
+
+.activity-tab.active {
+  color: #fff;
+  background: #1E3A5F;
+  border-radius: var(--radius-full);
+  border-bottom-color: transparent;
+  font-weight: 500;
+  padding: 6px 10px;
+  margin: 4px 4px 4px 0;
+}
+
+.activity-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  padding: 0 8px;
+}
+
+.activity-filter-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.activity-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.activity-filter-btn:hover {
+  background: var(--sidebar-hover-bg);
+}
+
+.activity-filter-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Table */
+.activities-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+}
+
+.activities-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid #F1F5F9;
+  white-space: nowrap;
+}
+
+.activities-table tbody tr {
+  transition: background 0.15s;
+}
+
+.activities-table tbody tr:nth-child(even) {
+  background: #F8FAFC;
+}
+
+.activities-table tbody tr:hover {
+  background: #EFF6FF;
+}
+
+.activities-table tbody td {
+  padding: 14px 16px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.activities-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Activity badges */
+.activity-badge {
+  display: block;
+  text-align: center;
+  padding: 8px 0px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #F1F5F9;
+  color: #64748B;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+
+/* Status badges */
+.status-badge {
+  display: block;
+  text-align: center;
+  padding: 8px 0px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge.in-progress {
+  color: #A16207;
+  background: #FEF9C3;
+}
+.status-badge.pending {
+  color: #EA580C;
+  background: #FFF7ED;
+}
+.status-badge.completed {
+  color: #065f46;
+  background: #F0FDF4;
+}
+.status-badge.approved {
+  color: #065f46;
+  background: #F0FDF4;
+}
+/* Dataverse status values */
+.status-badge.open {
+  color: #2563EB;
+  background: #EFF6FF;
+}
+.status-badge.close {
+  color: #065f46;
+  background: #F0FDF4;
+}
+.status-badge.active {
+  color: #065f46;
+  background: #F0FDF4;
+}
+.status-badge.maintenance {
+  color: #A16207;
+  background: #FEF9C3;
+}
+.status-badge.retired {
+  color: #6B7280;
+  background: #F3F4F6;
+}
+
+/* User cell */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight:600;
+  font-size:12px;
+}
+
+.user-avatar-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #d1d5db;
+  flex-shrink: 0;
+}
+
+/* View action */
+.view-action {
+  color: var(--blue-primary);
+  font-weight: 500;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.view-action:hover {
+  text-decoration: underline;
+  color: var(--blue-dark);
+  background: #eff6ff;
+}
+
+/* Table footer */
+.activities-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 16px 0;
+}
+
+.activities-footer-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.kpi-card {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.kpi-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.kpi-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.kpi-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.kpi-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.kpi-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.chart-card {
+  animation: fadeInUp 0.5s ease forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.charts-grid:nth-of-type(2) .chart-card {
+  animation-delay: 0.4s;
+}
+
+.activities-section {
+  animation: fadeInUp 0.5s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1400px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar-branding,
+  .navbar-user-info {
+    display: none;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ===== ERROR MODAL ===== */
+.error-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.error-modal-overlay.visible {
+  display: flex;
+}
+
+.error-modal {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 24px 28px;
+  max-width: 520px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease;
+}
+
+.error-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.error-modal-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.error-modal-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.error-modal-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.error-modal-body {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+  background: #F9FAFB;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.error-modal-close-btn {
+  display: block;
+  margin-left: auto;
+  padding: 8px 20px;
+  background: var(--heading-color);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.error-modal-close-btn:hover {
+  background: #374151;
+}
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOP NAVBAR ===== -->
+  <header class="top-navbar">
+    <div class="navbar-left">
+      <!-- Grid/menu icon -->
+      <button class="navbar-grid-btn" title="Menu">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="2" width="5" height="5" rx="1"/>
+          <rect x="10" y="2" width="5" height="5" rx="1"/>
+          <rect x="2" y="10" width="5" height="5" rx="1"/>
+          <rect x="10" y="10" width="5" height="5" rx="1"/>
+        </svg>
+      </button>
+
+      <!-- Search -->
+      <div class="navbar-search">
+        <span class="navbar-search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </span>
+        <input type="text" placeholder="Search..." />
+      </div>
+    </div>
+
+    <div class="navbar-right">
+      <!-- Notification bell -->
+      <button class="navbar-icon-btn" title="Notifications">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="badge">3</span>
+      </button>
+
+      <!-- Help -->
+      <button class="navbar-icon-btn" title="Help">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </button>
+
+      <!-- Settings gear -->
+      <button class="navbar-icon-btn" title="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+
+      <!-- User -->
+      <div class="navbar-user">
+        <div class="navbar-avatar">SA</div>
+        <div class="navbar-user-info">
+          <span class="navbar-user-name">Samuel</span>
+          <span class="navbar-user-role">Admin</span>
+        </div>
+      </div>
+
+      <!-- Branding -->
+      <div class="navbar-branding">
+        <span class="navbar-branding-text"><strong>Dynamics 365</strong>&nbsp; NextDesk</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== APP LAYOUT ===== -->
+  <div class="app-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">N</div>
+        <span class="sidebar-logo-text">NEXTDESK</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Primary section -->
+        <div class="sidebar-section">
+          <div class="sidebar-item active" data-nav="dashboard">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="7" height="8" rx="1.5"/>
+                <rect x="11" y="2" width="7" height="5" rx="1.5"/>
+                <rect x="2" y="12" width="7" height="5" rx="1.5"/>
+                <rect x="11" y="9" width="7" height="8" rx="1.5"/>
+              </svg>
+            </span>
+            Dashboard
+          </div>
+          <div class="sidebar-item" data-nav="service-requests">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="2" width="14" height="16" rx="2"/>
+                <line x1="7" y1="6" x2="13" y2="6"/>
+                <line x1="7" y1="10" x2="13" y2="10"/>
+                <line x1="7" y1="14" x2="10" y2="14"/>
+              </svg>
+            </span>
+            Service Requests
+          </div>
+          <div class="sidebar-item" data-nav="incidents">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 2 L18 16 L2 16 Z"/>
+                <line x1="10" y1="7" x2="10" y2="11"/>
+                <circle cx="10" cy="13.5" r="0.5" fill="currentColor"/>
+              </svg>
+            </span>
+            Incidents
+          </div>
+          <div class="sidebar-item" data-nav="cis">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="6" r="3"/>
+                <circle cx="5" cy="15" r="2.5"/>
+                <circle cx="15" cy="15" r="2.5"/>
+                <line x1="10" y1="9" x2="5" y2="12.5"/>
+                <line x1="10" y1="9" x2="15" y2="12.5"/>
+              </svg>
+            </span>
+            CIs
+          </div>
+        </div>
+
+        <!-- Secondary section -->
+        <div class="sidebar-section">
+          <div class="sidebar-item" data-nav="changes">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 14 8 10 12 14 16 6"/>
+                <polyline points="13 6 16 6 16 9"/>
+              </svg>
+            </span>
+            Changes
+          </div>
+          <div class="sidebar-item" data-nav="problems">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <circle cx="10" cy="10" r="8"/>
+                <line x1="10" y1="6" x2="10" y2="10"/>
+                <circle cx="10" cy="13" r="0.5" fill="currentColor"/>
+              </svg>
+            </span>
+            Problems
+          </div>
+          <div class="sidebar-item" data-nav="client-requests">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 17v-1.5a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3V17"/>
+                <circle cx="10" cy="6" r="3.5"/>
+              </svg>
+            </span>
+            Client Requests
+          </div>
+        </div>
+
+        <!-- Tertiary section -->
+        <div class="sidebar-section">
+          <div class="sidebar-item" data-nav="reports">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="16" x2="5" y2="9"/>
+                <line x1="10" y1="16" x2="10" y2="4"/>
+                <line x1="15" y1="16" x2="15" y2="11"/>
+              </svg>
+            </span>
+            Reports
+          </div>
+          <div class="sidebar-item" data-nav="settings">
+            <span class="sidebar-item-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="10" r="3"/>
+                <path d="M10 1.5v2M10 16.5v2M3.5 10h-2M18.5 10h-2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/>
+              </svg>
+            </span>
+            Settings
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- Page loader overlay -->
+      <div class="page-loader-overlay" id="pageLoaderOverlay">
+        <div class="loader-spinner"></div>
+        <span class="loader-text">Refreshing data...</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>NextDesk Command Center</h1>
+          <p>Operational overview across all modules</p>
+        </div>
+        <div class="page-header-actions">
+          <div class="date-filter-wrap">
+            <svg class="date-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <select id="datePeriodSelect" class="date-period-select">
+              <option value="7d" selected>Last 7 Days</option>
+              <option value="14d">Last 14 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="3m">Last 3 Months</option>
+              <option value="6m">Last 6 Months</option>
+              <option value="1y">Last 1 Year</option>
+            </select>
+          </div>
+          <button class="refresh-btn" id="headerRefreshBtn">
+            Refresh
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid" id="kpiGrid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Charts Row 1: Service Requests & Incidents -->
+      <div class="charts-grid">
+        <!-- Service Requests Chart -->
+        <div class="chart-card" id="serviceRequestsChart">
+          <div class="chart-card-header">
+            <span class="chart-card-title">Service Requests</span>
+            <div class="chart-card-icon service-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2"/>
+                <line x1="8" y1="7" x2="16" y2="7"/>
+                <line x1="8" y1="11" x2="16" y2="11"/>
+                <line x1="8" y1="15" x2="12" y2="15"/>
+              </svg>
+            </div>
+          </div>
+          <div class="chart-stats" id="srStats">
+            <!-- Populated by JS -->
+          </div>
+          <div class="bar-chart-container" id="srBarChart">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Incidents Chart -->
+        <div class="chart-card" id="incidentsChart">
+          <div class="chart-card-header">
+            <span class="chart-card-title">Incidents</span>
+            <div class="chart-card-icon incident-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2 L22 20 L2 20 Z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <circle cx="12" cy="16" r="0.5" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+          <div class="chart-stats" id="incStats">
+            <!-- Populated by JS -->
+          </div>
+          <div class="bar-chart-container" id="incBarChart">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2: Problems & CI Health -->
+      <div class="charts-grid">
+        <!-- Problems Chart -->
+        <div class="chart-card" id="problemsChart">
+          <div class="chart-card-header">
+            <span class="chart-card-title">Problems</span>
+            <div class="chart-card-icon problem-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <circle cx="12" cy="15.5" r="0.5" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+          <div class="chart-stats" id="prbStats">
+            <!-- Populated by JS -->
+          </div>
+          <div class="bar-chart-container" id="prbBarChart">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- CI Health Donut -->
+        <div class="chart-card" id="ciHealthChart">
+          <div class="chart-card-header">
+            <span class="chart-card-title">CI Health</span>
+            <div class="chart-card-icon ci-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <line x1="4" y1="9" x2="20" y2="9"/>
+                <line x1="4" y1="14" x2="20" y2="14"/>
+                <line x1="9" y1="4" x2="9" y2="20"/>
+              </svg>
+            </div>
+          </div>
+          <div class="donut-chart-container" id="donutContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activities -->
+      <section class="activities-section" id="activitiesSection">
+        <div class="activities-header">
+          <div class="activities-header-left">
+            <h2>Recent Activities</h2>
+            <p>All module activity log</p>
+          </div>
+          <button class="activities-refresh-btn" id="tableRefreshBtn">
+            Refresh
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Tabs + Filters row -->
+        <div class="activities-tabs-row">
+          <div class="activity-tabs" id="activityTabs">
+            <button class="activity-tab active" data-filter="Service Request">Service Requests</button>
+            <button class="activity-tab" data-filter="Incident">Incidents</button>
+            <button class="activity-tab" data-filter="CI">CIs</button>
+            <button class="activity-tab" data-filter="Change">Changes</button>
+            <button class="activity-tab" data-filter="Problem">Problems</button>
+            <button class="activity-tab" data-filter="Client Request">Client Requests</button>
+          </div>
+          <div class="activity-filters">
+            <span class="activity-filter-label">Filter:</span>
+            <div class="filter-dropdown-wrap">
+              <svg class="filter-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <select id="dateTimeFilter" class="filter-select">
+                <option value="all" selected>Date &amp; Time</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="last7">Last 7 Days</option>
+                <option value="last30">Last 30 Days</option>
+                <option value="older">Older</option>
+              </select>
+            </div>
+            <div class="filter-dropdown-wrap">
+              <svg class="filter-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              <select id="statusFilter" class="filter-select">
+                <option value="all" selected>Status</option>
+                <option value="Open">Open</option>
+                <option value="Pending">Pending</option>
+                <option value="Close">Close</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Approved">Approved</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table loader overlay -->
+        <div class="table-loader-overlay" id="tableLoaderOverlay">
+          <div class="loader-spinner"></div>
+        </div>
+
+        <!-- Table -->
+        <table class="activities-table" id="activitiesTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Activity</th>
+              <th>Date / Time</th>
+              <th>Status</th>
+              <th>User</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="activitiesBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+
+        <div class="activities-footer" id="activitiesFooter">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+/**
+ * NextDesk Dashboard — Integrated Script
+ * Handles Dataverse FetchXML data fetching, KPI rendering, bar charts,
+ * donut chart, and the Recent Activities table with per-tab Dataverse queries.
+ */
+
+(function () {
+  'use strict';
+
+  // ============================================================
+  //  CONFIGURATION
+  // ============================================================
+
+  const CONFIG = {
+    apiBase: 'https://orgab1ae89b.crm4.dynamics.com',
+    recentLimit: 50,
+  };
+
+  /** Option-set numeric values used in FetchXML filter conditions. */
+  const STATUS_VALUES = {
+    general: {
+      Open:    497700000,
+      Pending: 497700001,
+      Close:   497700002,
+    },
+    ci: {
+      Active:      124520000,
+      Maintenance: 124520001,
+      Retired:     124520002,
+    },
+  };
+
+  /**
+   * Registry: maps each activity tab to its Dataverse table and column logical names.
+   * The column mappings normalise each table's schema to the UI shape:
+   *   { id, activity, dateTime, status, user }
+   */
+  const ACTIVITY_TABLE_REGISTRY = {
+    'Service Request': {
+      entitySetName: 'cr229_requestses',
+      entityLogicalName: 'cr229_requests',
+      columns: {
+        id:       'versionnumber',
+        activity: 'cr229_requestname',
+        dateTime: 'createdon',
+        status:   'cr229_requeststatus',
+        user:     'cr229_by',
+      },
+    },
+    'Incident': {
+      entitySetName: 'cr229_incidents',
+      entityLogicalName: 'cr229_incident',
+      columns: {
+        id:       'cr229_incidentid',
+        activity: '',
+        dateTime: 'createdon',
+        status:   'cr229_incidentstatus',
+        user:     'cr229_by',
+      },
+    },
+    'CI': {
+      entitySetName: 'cr229_itsm_assets',
+      entityLogicalName: 'cr229_itsm_asset',
+      columns: {
+        id:       'cr229_itsm_assetid',
+        activity: 'cr229_ciname',
+        dateTime: 'createdon',
+        status:   'ma_cistatus',
+        user:     'createdby',
+      },
+    },
+    'Change': {
+      entitySetName: 'cr229_changes',
+      entityLogicalName: 'cr229_change',
+      columns: {
+        id:       'cr229_changeid',
+        activity: 'cr229_name',
+        dateTime: 'createdon',
+        status:   'cr229_changestatus',
+        user:     'cr229_by',
+      },
+    },
+    'Problem': {
+      entitySetName: 'cr229_problems',
+      entityLogicalName: 'cr229_problem',
+      columns: {
+        id:       'cr229_problemid',
+        activity: 'cr229_name',
+        dateTime: 'createdon',
+        status:   'cr229_problemstatus',
+        user:     'cr229_by',
+      },
+    },
+    'Client Request': {
+      entitySetName: 'ma_clientrequests',
+      entityLogicalName: 'ma_clientrequest',
+      columns: {
+        id:       'versionnumber',
+        activity: 'ma_email',
+        dateTime: 'createdon',
+        status:   'ma_status',
+        user:     'createdby',
+      },
+    },
+  };
+
+  // ============================================================
+  //  STATE
+  // ============================================================
+
+  /** Dashboard data object — populated from Dataverse or local JSON fallback. */
+  let dashboardData = null;
+
+  /** Active filter state for the activities table. */
+  let activeTabFilter = 'Service Request';
+  let activeStatusFilter = 'all';
+  let activeDateFilter = 'all';
+
+  /** Guards against race conditions when rapidly switching tabs. */
+  let currentFetchId = 0;
+
+  // ============================================================
+  //  DATAVERSE UTILITIES
+  // ============================================================
+
+  /**
+   * Returns the Dynamics 365 Web API base URL.
+   * Uses the Xrm context when running inside Power Apps,
+   * otherwise falls back to the configured base URL.
+   */
+  function getApiBase() {
+    try {
+      return Xrm.Utility.getGlobalContext().getClientUrl() + '/api/data/v9.2';
+    } catch (e) {
+      return (window.location.origin || CONFIG.apiBase) + '/api/data/v9.2';
+    }
+  }
+
+  /**
+   * Reusable FetchXML query executor.
+   * @param {string} base      – API base URL (from getApiBase())
+   * @param {string} table     – Entity set name (plural, e.g. 'cr229_requestses')
+   * @param {string} fetchXml  – FetchXML query string
+   * @returns {Promise<Object>} – Parsed JSON response
+   */
+  async function fetchWithXml(base, table, fetchXml) {
+    const url = `${base}/${table}?fetchXml=${encodeURIComponent(fetchXml)}`;
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'OData-MaxVersion': '4.0',
+        'OData-Version': '4.0',
+        'Prefer': 'odata.include-annotations="*"',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+    if (!resp.ok) throw new Error(`FetchXML Error: ${resp.status} ${resp.statusText}`);
+    return resp.json();
+  }
+
+  /**
+   * Extracts a display-friendly value from a Dataverse record.
+   * Tries formatted values first (for option sets, lookups, dates),
+   * then falls back to the raw field value.
+   */
+  function getRecordValue(record, fieldName) {
+    if (!fieldName) return '';
+    // Formatted value annotation (option sets, dates, etc.)
+    const formatted = record[`${fieldName}@OData.Community.Display.V1.FormattedValue`];
+    if (formatted !== undefined && formatted !== null) return formatted;
+    // Lookup value format (_field_value)
+    const lookupFormatted = record[`_${fieldName}_value@OData.Community.Display.V1.FormattedValue`];
+    if (lookupFormatted !== undefined && lookupFormatted !== null) return lookupFormatted;
+    const lookupVal = record[`_${fieldName}_value`];
+    if (lookupVal !== undefined && lookupVal !== null) return lookupVal;
+    // Direct value
+    return record[fieldName] ?? '';
+  }
+
+  /**
+   * Formats an ISO 8601 date string to a human-readable format.
+   * Used as a fallback when Dataverse annotations aren't available.
+   */
+  function formatDateTime(isoString) {
+    if (!isoString) return '';
+    try {
+      const date = new Date(isoString);
+      if (isNaN(date.getTime())) return isoString;
+      return date.toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true,
+      });
+    } catch {
+      return isoString;
+    }
+  }
+
+  /**
+   * Shows a simple text-only error popup modal with the given message.
+   * Auto-dismisses after 8 seconds. Can be closed by clicking the
+   * button or the overlay backdrop.
+   */
+  function showErrorModal(message) {
+    // Remove any existing modal
+    const existing = document.getElementById('errorModalOverlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'errorModalOverlay';
+    overlay.className = 'error-modal-overlay visible';
+    overlay.innerHTML = `
+      <div class="error-modal">
+        <div class="error-modal-header">
+          <div class="error-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <span class="error-modal-title">Dataverse Error</span>
+        </div>
+        <div class="error-modal-body">${message}</div>
+        <button class="error-modal-close-btn" id="errorModalCloseBtn">Dismiss</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Close handlers
+    const close = () => overlay.remove();
+    document.getElementById('errorModalCloseBtn').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+    // Auto-dismiss after 8 seconds
+    setTimeout(() => { if (document.body.contains(overlay)) close(); }, 8000);
+  }
+
+  // ============================================================
+  //  ACTIVITY DATA FETCHING (per-tab)
+  // ============================================================
+
+  /**
+   * Fetches activities from a Dataverse table using FetchXML.
+   * This is a reusable utility — each tab calls it with its own config
+   * from ACTIVITY_TABLE_REGISTRY.
+   *
+   * @param {Object} tableConfig – Entry from ACTIVITY_TABLE_REGISTRY
+   * @returns {Promise<Array>}   – Array of { id, activity, dateTime, status, user }
+   */
+  async function fetchActivitiesFromDataverse(tableConfig) {
+    const base = getApiBase();
+    const cols = tableConfig.columns;
+
+    // Build attribute list, skipping empty column names
+    const attributes = Object.values(cols)
+      .filter(col => col)
+      .map(col => `<attribute name="${col}" />`)
+      .join('\n          ');
+
+    const fetchXml = `
+      <fetch top="${CONFIG.recentLimit}">
+        <entity name="${tableConfig.entityLogicalName}">
+          ${attributes}
+          <order attribute="${cols.dateTime}" descending="true" />
+        </entity>
+      </fetch>`;
+
+    const data = await fetchWithXml(base, tableConfig.entitySetName, fetchXml);
+
+    return (data.value || []).map(record => ({
+      id:       getRecordValue(record, cols.id),
+      activity: getRecordValue(record, cols.activity),
+      dateTime: getRecordValue(record, cols.dateTime) || formatDateTime(record[cols.dateTime]),
+      status:   getRecordValue(record, cols.status),
+      user:     getRecordValue(record, cols.user),
+    }));
+  }
+
+  // ============================================================
+  //  KPI & CHART DATA FETCHING
+  // ============================================================
+
+  /**
+   * Fetches the total record count for a Dataverse entity.
+   * Uses FetchXML with returntotalrecordcount to efficiently count records.
+   *
+   * @param {string} entitySetName     – e.g. 'cr229_requestses'
+   * @param {string} entityLogicalName – e.g. 'cr229_requests'
+   * @param {string} columnName        – Any column to include (e.g. 'createdon')
+   * @returns {Promise<number>}
+   */
+  async function fetchKPICount(entitySetName, entityLogicalName, columnName) {
+    const base = getApiBase();
+    const xml = `
+      <fetch version="1.0" mapping="logical" returntotalrecordcount="true" count="1">
+        <entity name="${entityLogicalName}">
+          <attribute name="${columnName}" />
+        </entity>
+      </fetch>`;
+    const data = await fetchWithXml(base, entitySetName, xml);
+    return data['@odata.count'] ?? 0;
+  }
+
+  /**
+   * Fetches a filtered record count for a Dataverse entity.
+   * Pass a FetchXML filter snippet to count only matching records.
+   *
+   * @param {string} entitySetName     – e.g. 'cr229_requestses'
+   * @param {string} entityLogicalName – e.g. 'cr229_requests'
+   * @param {string} columnName        – Any column to include
+   * @param {string} filterXml         – FetchXML <filter> element
+   * @returns {Promise<number>}
+   */
+  async function fetchKPIFilteredCount(entitySetName, entityLogicalName, columnName, filterXml) {
+    const base = getApiBase();
+    const xml = `
+      <fetch version="1.0" mapping="logical" returntotalrecordcount="true" count="1">
+        <entity name="${entityLogicalName}">
+          <attribute name="${columnName}" />
+          ${filterXml}
+        </entity>
+      </fetch>`;
+    const data = await fetchWithXml(base, entitySetName, xml);
+    return data['@odata.count'] ?? 0;
+  }
+
+  /**
+   * Fetches the count of records matching a specific status value.
+   *
+   * @param {Object} tableConfig – Entry from ACTIVITY_TABLE_REGISTRY
+   * @param {number} statusValue – Numeric option-set value (from STATUS_VALUES)
+   * @returns {Promise<number>}
+   */
+  async function fetchStatusCount(tableConfig, statusValue) {
+    const filterXml = `<filter><condition attribute="${tableConfig.columns.status}" operator="eq" value="${statusValue}" /></filter>`;
+    return fetchKPIFilteredCount(
+      tableConfig.entitySetName,
+      tableConfig.entityLogicalName,
+      tableConfig.columns.dateTime,
+      filterXml
+    );
+  }
+
+  // ============================================================
+  //  DASHBOARD DATA LOADING
+  // ============================================================
+
+  /**
+   * Attempts to load all dashboard data (KPIs, chart values) from Dataverse.
+   * Populates the dashboardData object in the same shape as data.json
+   * so all existing render functions work without modification.
+   */
+  async function loadDashboardFromDataverse() {
+    const sr  = ACTIVITY_TABLE_REGISTRY['Service Request'];
+    const inc = ACTIVITY_TABLE_REGISTRY['Incident'];
+    const ci  = ACTIVITY_TABLE_REGISTRY['CI'];
+    const chg = ACTIVITY_TABLE_REGISTRY['Change'];
+    const prb = ACTIVITY_TABLE_REGISTRY['Problem'];
+
+    // --- Fetch all status counts in parallel ---
+    const [
+      srOpen, srPending, srClose,
+      incOpen, incPending, incClose,
+      chgOpen, chgPending, chgClose,
+      prbOpen, prbPending, prbClose,
+      ciActive, ciMaintenance, ciRetired,
+    ] = await Promise.all([
+      // Service Requests
+      fetchStatusCount(sr,  STATUS_VALUES.general.Open),
+      fetchStatusCount(sr,  STATUS_VALUES.general.Pending),
+      fetchStatusCount(sr,  STATUS_VALUES.general.Close),
+      // Incidents
+      fetchStatusCount(inc, STATUS_VALUES.general.Open),
+      fetchStatusCount(inc, STATUS_VALUES.general.Pending),
+      fetchStatusCount(inc, STATUS_VALUES.general.Close),
+      // Changes
+      fetchStatusCount(chg, STATUS_VALUES.general.Open),
+      fetchStatusCount(chg, STATUS_VALUES.general.Pending),
+      fetchStatusCount(chg, STATUS_VALUES.general.Close),
+      // Problems
+      fetchStatusCount(prb, STATUS_VALUES.general.Open),
+      fetchStatusCount(prb, STATUS_VALUES.general.Pending),
+      fetchStatusCount(prb, STATUS_VALUES.general.Close),
+      // CI Health
+      fetchStatusCount(ci,  STATUS_VALUES.ci.Active),
+      fetchStatusCount(ci,  STATUS_VALUES.ci.Maintenance),
+      fetchStatusCount(ci,  STATUS_VALUES.ci.Retired),
+    ]);
+
+    // Derive totals from status counts
+    const srTotal  = srOpen  + srPending  + srClose;
+    const incTotal = incOpen + incPending + incClose;
+    const chgTotal = chgOpen + chgPending + chgClose;
+    const prbTotal = prbOpen + prbPending + prbClose;
+    const ciTotal  = ciActive + ciMaintenance + ciRetired;
+    const ciActivePercent = ciTotal > 0 ? Math.round((ciActive / ciTotal) * 100) : 0;
+
+    dashboardData = {
+      kpis: {
+        totalServiceRequests: { value: srTotal,  changePercent: 0, trend: 'up' },
+        totalIncidents:       { value: incTotal, changePercent: 0, trend: 'up' },
+        totalCIs:             { value: ciTotal,  percentage: ciActivePercent },
+        totalChanges:         { value: chgTotal, awaiting: chgPending },
+        totalProblems:        { value: prbTotal, critical: 0 },
+      },
+      serviceRequests: { pending: srPending,  completed: srClose },
+      incidents:       { open: incOpen,       closed: incClose },
+      problems:        { open: prbOpen,       closed: prbClose },
+      ciHealth:        { active: ciActive,    maintenance: ciMaintenance, retired: ciRetired },
+      recentActivities: [],
+      totalActivities: srTotal + incTotal + chgTotal + prbTotal + ciTotal,
+    };
+  }
+
+  /** Creates an empty dashboard data structure for fallback. */
+  function createEmptyDashboardData() {
+    return {
+      kpis: {
+        totalServiceRequests: { value: 0, changePercent: 0, trend: 'up' },
+        totalIncidents:       { value: 0, changePercent: 0, trend: 'up' },
+        totalCIs:             { value: 0, percentage: 0 },
+        totalChanges:         { value: 0, awaiting: 0 },
+        totalProblems:        { value: 0, critical: 0 },
+      },
+      serviceRequests: { pending: 0, completed: 0 },
+      incidents:       { open: 0,    closed: 0 },
+      problems:        { open: 0,    closed: 0 },
+      ciHealth:        { active: 0,  maintenance: 0, retired: 0 },
+      recentActivities: [],
+      totalActivities: 0,
+    };
+  }
+
+  /**
+   * Main data loading function.
+   * Tries Dataverse first, then falls back to local data.json,
+   * and finally to an empty dataset if both fail.
+   */
+  async function loadData() {
+    try {
+      await loadDashboardFromDataverse();
+      console.info('Dashboard data loaded from Dataverse.');
+    } catch (err) {
+      console.warn('Dataverse load failed, trying local data.json:', err.message);
+      showErrorModal(`Dashboard load failed:\n${err.message}\n\nFalling back to local data.`);
+      try {
+        const res = await fetch('data.json');
+        dashboardData = await res.json();
+        console.info('Dashboard data loaded from local data.json.');
+      } catch (err2) {
+        console.warn('Local data.json also unavailable:', err2.message);
+        dashboardData = createEmptyDashboardData();
+      }
+    }
+    renderAll();
+  }
+
+  // ============================================================
+  //  RENDER ALL
+  // ============================================================
+
+  function renderAll() {
+    renderKPICards();
+    renderChartStats();
+    renderBarCharts();
+    renderDonutChart();
+    renderActivitiesTable();
+    bindTabs();
+    bindFilters();
+    bindRefreshButtons();
+    bindDatePeriodSelect();
+  }
+
+  // ============================================================
+  //  KPI CARDS
+  // ============================================================
+
+  function renderKPICards() {
+    const grid = document.getElementById('kpiGrid');
+    const { kpis } = dashboardData;
+
+    const cards = [
+      {
+        type: 'service',
+        title: 'Total Service Requests',
+        value: kpis.totalServiceRequests.value,
+        change: `↑ ${kpis.totalServiceRequests.changePercent}%`,
+        changeClass: 'up',
+        link: 'View Service requests →',
+        icon: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="14" height="16" rx="2"/><line x1="7" y1="6" x2="13" y2="6"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="10" y2="14"/></svg>`
+      },
+      {
+        type: 'incident',
+        title: 'Total Incidents',
+        value: kpis.totalIncidents.value,
+        change: `↑ ${kpis.totalIncidents.changePercent}%`,
+        changeClass: 'up',
+        link: 'View Incidents →',
+        icon: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 L18 16 L2 16 Z"/><line x1="10" y1="7" x2="10" y2="11"/><circle cx="10" cy="13.5" r="0.5" fill="currentColor"/></svg>`
+      },
+      {
+        type: 'ci',
+        title: 'Total CIs',
+        value: kpis.totalCIs.value.toLocaleString(),
+        change: `${kpis.totalCIs.percentage}%`,
+        changeClass: 'up',
+        link: 'View CIs →',
+        icon: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6" r="3"/><circle cx="5" cy="15" r="2.5"/><circle cx="15" cy="15" r="2.5"/><line x1="10" y1="9" x2="5" y2="12.5"/><line x1="10" y1="9" x2="15" y2="12.5"/></svg>`
+      },
+      {
+        type: 'change',
+        title: 'Total Changes',
+        value: kpis.totalChanges.value,
+        change: `${kpis.totalChanges.awaiting} awaiting`,
+        changeClass: 'awaiting',
+        link: 'View changes →',
+        icon: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 8 10 12 14 16 6"/><polyline points="13 6 16 6 16 9"/></svg>`
+      },
+      {
+        type: 'problem',
+        title: 'Total problems',
+        value: kpis.totalProblems.value,
+        change: `${kpis.totalProblems.critical} critical`,
+        changeClass: 'critical',
+        link: 'View Problems →',
+        icon: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="13" r="0.5" fill="currentColor"/></svg>`
+      }
+    ];
+
+    grid.innerHTML = cards.map(c => `
+      <div class="kpi-card ${c.type}">
+        <div class="kpi-header">
+          <div class="kpi-icon">${c.icon}</div>
+          <span class="kpi-title">${c.title}</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value">${c.value}</span>
+          <span class="kpi-change ${c.changeClass}">${c.change}</span>
+        </div>
+        <a href="#" class="kpi-link" onclick="return false">${c.link}</a>
+      </div>
+    `).join('');
+  }
+
+  // ============================================================
+  //  CHART STATS
+  // ============================================================
+
+  function renderChartStats() {
+    const { serviceRequests, incidents, problems } = dashboardData;
+
+    document.getElementById('srStats').innerHTML = `
+      <div class="chart-stat">
+        <span class="chart-stat-value">${serviceRequests.pending}</span>
+        <span class="chart-stat-label pending">Pending</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-value">${serviceRequests.completed}</span>
+        <span class="chart-stat-label completed">Completed</span>
+      </div>
+    `;
+
+    document.getElementById('incStats').innerHTML = `
+      <div class="chart-stat">
+        <span class="chart-stat-value">${incidents.open}</span>
+        <span class="chart-stat-label open">Open</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-value">${incidents.closed}</span>
+        <span class="chart-stat-label closed">Closed</span>
+      </div>
+    `;
+
+    document.getElementById('prbStats').innerHTML = `
+      <div class="chart-stat">
+        <span class="chart-stat-value">${problems.open}</span>
+        <span class="chart-stat-label open">Open</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-value">${problems.closed}</span>
+        <span class="chart-stat-label closed">Closed</span>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  //  BAR CHARTS
+  // ============================================================
+
+  function renderBarCharts() {
+    const { serviceRequests, incidents, problems } = dashboardData;
+    const maxScale = 150;
+
+    renderBarChart('srBarChart', serviceRequests.pending, serviceRequests.completed, maxScale);
+    renderBarChart('incBarChart', incidents.open, incidents.closed, maxScale);
+    renderBarChart('prbBarChart', problems.open, problems.closed, maxScale);
+  }
+
+  function renderBarChart(containerId, primaryVal, secondaryVal, maxScale) {
+    const container = document.getElementById(containerId);
+    const yLabels = [150, 120, 90, 60, 30, 0];
+
+    const primaryHeight = (primaryVal / maxScale) * 100;
+    const secondaryHeight = (secondaryVal / maxScale) * 100;
+
+    container.innerHTML = `
+      <div class="bar-chart-y-axis">
+        ${yLabels.map(l => `<span class="bar-chart-y-label">${l}</span>`).join('')}
+      </div>
+      <div class="bar-chart-area">
+        <div class="bar-chart-gridlines">
+          ${yLabels.map(() => `<div class="bar-chart-gridline"></div>`).join('')}
+        </div>
+        <div class="bar-chart-bars">
+          <div class="bar-group">
+            <span class="bar-value-label">${primaryVal}</span>
+            <div class="bar primary" style="height: 0%" data-height="${primaryHeight}%"></div>
+          </div>
+          <div class="bar-group">
+            <span class="bar-value-label">${secondaryVal}</span>
+            <div class="bar secondary" style="height: 0%" data-height="${secondaryHeight}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Animate bars after a short delay
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        container.querySelectorAll('.bar').forEach(bar => {
+          bar.style.height = bar.dataset.height;
+        });
+      }, 100);
+    });
+  }
+
+  // ============================================================
+  //  DONUT CHART
+  // ============================================================
+
+  function renderDonutChart() {
+    const { ciHealth } = dashboardData;
+    const total = ciHealth.active + ciHealth.maintenance + ciHealth.retired;
+    const container = document.getElementById('donutContainer');
+
+    const radius = 70;
+    const circumference = 2 * Math.PI * radius;
+
+    const activeLen = total > 0 ? (ciHealth.active / total) * circumference : 0;
+    const maintenanceLen = total > 0 ? (ciHealth.maintenance / total) * circumference : 0;
+    const retiredLen = total > 0 ? (ciHealth.retired / total) * circumference : 0;
+
+    container.innerHTML = `
+      <div class="donut-svg-wrap">
+        <svg viewBox="0 0 200 200">
+          <!-- Background circle -->
+          <circle cx="100" cy="100" r="${radius}" fill="none" stroke="#F3F4F6" stroke-width="28"/>
+          <!-- Retired -->
+          <circle cx="100" cy="100" r="${radius}" fill="none"
+            stroke="#9CA3AF" stroke-width="28"
+            stroke-dasharray="${retiredLen} ${circumference - retiredLen}"
+            stroke-dashoffset="-${activeLen + maintenanceLen}"
+            />
+          <!-- Maintenance -->
+          <circle cx="100" cy="100" r="${radius}" fill="none"
+            stroke="#F59E0B" stroke-width="28"
+            stroke-dasharray="${maintenanceLen} ${circumference - maintenanceLen}"
+            stroke-dashoffset="-${activeLen}"
+            />
+          <!-- Active (green, drawn last = on top) -->
+          <circle cx="100" cy="100" r="${radius}" fill="none"
+            stroke="#10B981" stroke-width="28"
+            stroke-dasharray="${activeLen} ${circumference - activeLen}"
+            stroke-dashoffset="0"
+            />
+        </svg>
+      </div>
+      <div class="donut-legend">
+        <div class="donut-legend-item">
+          <span class="donut-legend-dot active"></span>
+          Active
+        </div>
+        <div class="donut-legend-item">
+          <span class="donut-legend-dot maintenance"></span>
+          Maintenance
+        </div>
+        <div class="donut-legend-item">
+          <span class="donut-legend-dot retired"></span>
+          Retired
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  //  RECENT ACTIVITIES TABLE (per-tab Dataverse fetch)
+  // ============================================================
+
+  async function renderActivitiesTable() {
+    const fetchId = ++currentFetchId;
+    const tbody = document.getElementById('activitiesBody');
+    const footer = document.getElementById('activitiesFooter');
+
+    // Look up the Dataverse config for the active tab
+    const tableConfig = ACTIVITY_TABLE_REGISTRY[activeTabFilter];
+    let activities = [];
+
+    // Attempt Dataverse fetch; fall back to local JSON data
+    if (tableConfig && tableConfig.entitySetName) {
+      try {
+        activities = await fetchActivitiesFromDataverse(tableConfig);
+      } catch (err) {
+        console.warn(`Dataverse fetch failed for "${activeTabFilter}":`, err.message);
+        showErrorModal(`Failed to fetch ${activeTabFilter} data:\n${err.message}`);
+        activities = (dashboardData.recentActivities || [])
+          .filter(a => a.activity === activeTabFilter);
+      }
+    } else {
+      activities = (dashboardData.recentActivities || [])
+        .filter(a => a.activity === activeTabFilter);
+    }
+
+    // Abort if another tab switch happened while we were fetching
+    if (fetchId !== currentFetchId) return;
+
+    // Apply status filter
+    if (activeStatusFilter !== 'all') {
+      activities = activities.filter(a => a.status === activeStatusFilter);
+    }
+
+    // Apply date filter
+    if (activeDateFilter !== 'all') {
+      activities = activities.filter(a => {
+        const actDate = new Date(a.dateTime);
+        const now = new Date();
+        const diffMs = now - actDate;
+        const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+        switch (activeDateFilter) {
+          case 'today':
+            return diffDays < 1;
+          case 'yesterday':
+            return diffDays >= 1 && diffDays < 2;
+          case 'last7':
+            return diffDays < 7;
+          case 'last30':
+            return diffDays < 30;
+          case 'older':
+            return diffDays >= 30;
+          default:
+            return true;
+        }
+      });
+    }
+
+    const filteredCount = activities.length;
+    const displayCount = Math.min(filteredCount, 10);
+    const displayActivities = activities.slice(0, 10);
+
+    if (displayActivities.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center; padding:40px 16px; color:#9CA3AF;">
+            No activities match the selected filters.
+          </td>
+        </tr>
+      `;
+    } else {
+      tbody.innerHTML = displayActivities.map(a => {
+        // Use the record's activity name, or fall back to the tab filter name
+        const activityLabel = a.activity || activeTabFilter;
+        const activityClass = activityLabel.toLowerCase().replace(/\s+/g, '-');
+        const statusClass = String(a.status).toLowerCase().replace(/\s+/g, '-');
+
+        return `
+          <tr>
+            <td><strong>${a.id}</strong></td>
+            <td><span class="activity-badge ${activityClass}">${activityLabel}</span></td>
+            <td>${a.dateTime}</td>
+            <td><span class="status-badge ${statusClass}">${a.status}</span></td>
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar-sm"></div>
+                ${a.user}
+              </div>
+            </td>
+            <td><span class="view-action">View</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    footer.innerHTML = `
+      <span class="activities-footer-text">Showing ${displayCount} of ${filteredCount} ${activeTabFilter} activities</span>
+    `;
+  }
+
+  // ============================================================
+  //  TAB BINDING
+  // ============================================================
+
+  function bindTabs() {
+    const tabContainer = document.getElementById('activityTabs');
+    tabContainer.addEventListener('click', (e) => {
+      const tab = e.target.closest('.activity-tab');
+      if (!tab) return;
+
+      // Update active state
+      tabContainer.querySelectorAll('.activity-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // Update filter state & re-render (fetches from the new tab's Dataverse table)
+      activeTabFilter = tab.dataset.filter;
+      renderActivitiesTable();
+    });
+  }
+
+  // ============================================================
+  //  FILTER BINDING
+  // ============================================================
+
+  function bindFilters() {
+    const statusSelect = document.getElementById('statusFilter');
+    const dateTimeSelect = document.getElementById('dateTimeFilter');
+
+    if (statusSelect) {
+      statusSelect.addEventListener('change', () => {
+        activeStatusFilter = statusSelect.value;
+        statusSelect.classList.toggle('active-filter', activeStatusFilter !== 'all');
+        renderActivitiesTable();
+      });
+    }
+
+    if (dateTimeSelect) {
+      dateTimeSelect.addEventListener('change', () => {
+        activeDateFilter = dateTimeSelect.value;
+        dateTimeSelect.classList.toggle('active-filter', activeDateFilter !== 'all');
+        renderActivitiesTable();
+      });
+    }
+  }
+
+  // ============================================================
+  //  REFRESH BUTTONS
+  // ============================================================
+
+  function bindRefreshButtons() {
+    // Header refresh → full page loader + re-fetch from Dataverse
+    const headerRefreshBtn = document.getElementById('headerRefreshBtn');
+    if (headerRefreshBtn) {
+      headerRefreshBtn.addEventListener('click', () => simulatePageRefresh());
+    }
+
+    // Table refresh → table-only loader
+    const tableRefreshBtn = document.getElementById('tableRefreshBtn');
+    if (tableRefreshBtn) {
+      tableRefreshBtn.addEventListener('click', () => simulateTableRefresh());
+    }
+  }
+
+  // ============================================================
+  //  DATE PERIOD SELECT
+  // ============================================================
+
+  function bindDatePeriodSelect() {
+    const select = document.getElementById('datePeriodSelect');
+    if (select) {
+      select.addEventListener('change', () => simulatePageRefresh());
+    }
+  }
+
+  // ============================================================
+  //  SIMULATE PAGE REFRESH (re-fetches from Dataverse)
+  // ============================================================
+
+  async function simulatePageRefresh() {
+    const overlay = document.getElementById('pageLoaderOverlay');
+    const refreshBtn = document.getElementById('headerRefreshBtn');
+    if (!overlay) return;
+
+    // Show overlay & spin the refresh icon
+    overlay.classList.add('visible');
+    if (refreshBtn) refreshBtn.classList.add('spinning');
+
+    try {
+      await loadDashboardFromDataverse();
+      console.info('Dashboard refreshed from Dataverse.');
+    } catch (err) {
+      console.warn('Refresh from Dataverse failed, keeping current data:', err.message);
+      showErrorModal(`Refresh failed:\n${err.message}\n\nKeeping current data.`);
+    }
+
+    // Re-render everything
+    renderKPICards();
+    renderChartStats();
+    renderBarCharts();
+    renderDonutChart();
+    await renderActivitiesTable();
+
+    // Hide overlay
+    overlay.classList.remove('visible');
+    if (refreshBtn) refreshBtn.classList.remove('spinning');
+  }
+
+  // ============================================================
+  //  SIMULATE TABLE REFRESH
+  // ============================================================
+
+  async function simulateTableRefresh() {
+    const overlay = document.getElementById('tableLoaderOverlay');
+    if (!overlay) return;
+
+    overlay.classList.add('visible');
+    await renderActivitiesTable();
+    overlay.classList.remove('visible');
+  }
+
+  // ============================================================
+  //  SIDEBAR INTERACTION
+  // ============================================================
+
+  function bindSidebar() {
+    const items = document.querySelectorAll('.sidebar-item');
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        items.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+  }
+
+  // ============================================================
+  //  INIT
+  // ============================================================
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    bindSidebar();
+  });
+
+})();
+  </script>
+</body>
+</html>
