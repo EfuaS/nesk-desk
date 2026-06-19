@@ -20,7 +20,6 @@
 :root {
   /* Core colors */
   --navbar-bg: #1a1d23;
-  --sidebar-bg: #ffffff;
   --main-bg: #f3f4f8;
   --heading-color: #111827;
   --text-primary: #374151;
@@ -47,9 +46,6 @@
   --kpi-border-blue: #1a6ef5;
 
   /* Sidebar */
-  --sidebar-width: 220px;
-  --sidebar-active-bg: #eff6ff;
-  --sidebar-active-text: #2563eb;
   --sidebar-hover-bg: #f3f4f6;
 
   /* Navbar */
@@ -283,116 +279,9 @@ button {
   font-weight: 600;
 }
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-  position: fixed;
-  top: var(--navbar-height);
-  left: 0;
-  width: var(--sidebar-width);
-  height: calc(100vh - var(--navbar-height));
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  z-index: 50;
-  overflow-y: auto;
-}
-
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 20px 20px 24px;
-}
-
-.sidebar-logo-icon {
-  width: 30px;
-  height: 30px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  border-radius: var(--radius-sm);
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidebar-logo-text {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--heading-color);
-  letter-spacing: 0.5px;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 0 12px;
-}
-
-.sidebar-section {
-  margin-bottom: 8px;
-}
-
-.sidebar-section + .sidebar-section {
-  padding-top: 8px;
-  border-top: 1px solid var(--border-color);
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  user-select: none;
-}
-
-.sidebar-item:hover {
-  background: var(--sidebar-hover-bg);
-  color: var(--text-primary);
-}
-
-.sidebar-item.active {
-  background: var(--sidebar-active-bg);
-  color: var(--sidebar-active-text);
-  font-weight: 500;
-}
-
-.sidebar-item.active::before {
-  content: "";
-  position: absolute;
-  left: -12px;
-  top: 4px;
-  bottom: 4px;
-  width: 3px;
-  background: var(--blue-primary);
-  border-radius: 0 3px 3px 0;
-}
-
-.sidebar-item-icon {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.sidebar-item-icon svg {
-  width: 18px;
-  height: 18px;
-}
 
 /* ===== MAIN CONTENT ===== */
 .main-content {
-  margin-left: var(--sidebar-width);
   flex: 1;
   padding: 28px 32px 40px;
   min-height: calc(100vh - var(--navbar-height));
@@ -503,7 +392,6 @@ button {
   display: none;
   position: fixed;
   top: var(--navbar-height);
-  left: var(--sidebar-width);
   right: 0;
   bottom: 0;
   background: rgba(243, 244, 248, 0.82);
@@ -819,13 +707,17 @@ button {
   font-weight: 700;
 }
 
-.chart-stat-label.pending,
+.chart-stat-label.pending {
+  color: var(--purple-dark);
+
+}
+
 .chart-stat-label.open {
   color: var(--blue-primary);
 }
 .chart-stat-label.completed,
 .chart-stat-label.closed {
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 /* ===== BAR CHART ===== */
@@ -907,13 +799,17 @@ button {
   border-radius: 4px 4px 0 0;
   transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
+/* used for pending bars */
 .bar.primary {
   background: var(--blue-primary);
 }
-
+/* used for open bars */
 .bar.secondary {
-  background: #d1d5db;
+  background: var(--purple-dark);
+}
+/* used for closed bars */
+.bar.tertiary {
+  background: var(--text-muted);
 }
 
 /* ===== DONUT CHART ===== */
@@ -1341,9 +1237,6 @@ button {
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
 
   .main-content {
     margin-left: 0;
@@ -1538,119 +1431,6 @@ button {
   <!-- ===== APP LAYOUT ===== -->
   <div class="app-layout">
 
-    <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">N</div>
-        <span class="sidebar-logo-text">NEXTDESK</span>
-      </div>
-
-      <nav class="sidebar-nav">
-        <!-- Primary section -->
-        <div class="sidebar-section">
-          <div class="sidebar-item active" data-nav="dashboard">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="7" height="8" rx="1.5"/>
-                <rect x="11" y="2" width="7" height="5" rx="1.5"/>
-                <rect x="2" y="12" width="7" height="5" rx="1.5"/>
-                <rect x="11" y="9" width="7" height="8" rx="1.5"/>
-              </svg>
-            </span>
-            Dashboard
-          </div>
-          <div class="sidebar-item" data-nav="service-requests">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="2" width="14" height="16" rx="2"/>
-                <line x1="7" y1="6" x2="13" y2="6"/>
-                <line x1="7" y1="10" x2="13" y2="10"/>
-                <line x1="7" y1="14" x2="10" y2="14"/>
-              </svg>
-            </span>
-            Service Requests
-          </div>
-          <div class="sidebar-item" data-nav="incidents">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 2 L18 16 L2 16 Z"/>
-                <line x1="10" y1="7" x2="10" y2="11"/>
-                <circle cx="10" cy="13.5" r="0.5" fill="currentColor"/>
-              </svg>
-            </span>
-            Incidents
-          </div>
-          <div class="sidebar-item" data-nav="cis">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="10" cy="6" r="3"/>
-                <circle cx="5" cy="15" r="2.5"/>
-                <circle cx="15" cy="15" r="2.5"/>
-                <line x1="10" y1="9" x2="5" y2="12.5"/>
-                <line x1="10" y1="9" x2="15" y2="12.5"/>
-              </svg>
-            </span>
-            CIs
-          </div>
-        </div>
-
-        <!-- Secondary section -->
-        <div class="sidebar-section">
-          <div class="sidebar-item" data-nav="changes">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="4 14 8 10 12 14 16 6"/>
-                <polyline points="13 6 16 6 16 9"/>
-              </svg>
-            </span>
-            Changes
-          </div>
-          <div class="sidebar-item" data-nav="problems">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-                <circle cx="10" cy="10" r="8"/>
-                <line x1="10" y1="6" x2="10" y2="10"/>
-                <circle cx="10" cy="13" r="0.5" fill="currentColor"/>
-              </svg>
-            </span>
-            Problems
-          </div>
-          <div class="sidebar-item" data-nav="client-requests">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 17v-1.5a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3V17"/>
-                <circle cx="10" cy="6" r="3.5"/>
-              </svg>
-            </span>
-            Client Requests
-          </div>
-        </div>
-
-        <!-- Tertiary section -->
-        <div class="sidebar-section">
-          <div class="sidebar-item" data-nav="reports">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="16" x2="5" y2="9"/>
-                <line x1="10" y1="16" x2="10" y2="4"/>
-                <line x1="15" y1="16" x2="15" y2="11"/>
-              </svg>
-            </span>
-            Reports
-          </div>
-          <div class="sidebar-item" data-nav="settings">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="10" cy="10" r="3"/>
-                <path d="M10 1.5v2M10 16.5v2M3.5 10h-2M18.5 10h-2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/>
-              </svg>
-            </span>
-            Settings
-          </div>
-        </div>
-      </nav>
-    </aside>
-
     <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
 
@@ -1787,7 +1567,7 @@ button {
       <section class="activities-section" id="activitiesSection">
         <div class="activities-header">
           <div class="activities-header-left">
-            <h2>Recent Activities</h2>
+            <h2>Activities</h2>
             <p>All module activity log</p>
           </div>
           <button class="activities-refresh-btn" id="tableRefreshBtn">
@@ -1807,7 +1587,6 @@ button {
             <button class="activity-tab" data-filter="CI">CIs</button>
             <button class="activity-tab" data-filter="Change">Changes</button>
             <button class="activity-tab" data-filter="Problem">Problems</button>
-            <button class="activity-tab" data-filter="Client Request">Client Requests</button>
           </div>
           <div class="activity-filters">
             <span class="activity-filter-label">Filter:</span>
@@ -1854,7 +1633,7 @@ button {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Activity</th>
+              <th>Type</th>
               <th>Date / Time</th>
               <th>Status</th>
               <th>User</th>
@@ -1899,6 +1678,8 @@ button {
       Open:    497700000,
       Pending: 497700001,
       Close:   497700002,
+      New:    497700000,
+
     },
     ci: {
       Active:      124520000,
@@ -1917,8 +1698,8 @@ button {
       entitySetName: 'cr229_requestses',
       entityLogicalName: 'cr229_requests',
       columns: {
-        id:       'versionnumber',
-        activity: 'cr229_requestname',
+        id:       'cr229_requestname',
+        activity: 'cr229_typeofincident',
         dateTime: 'createdon',
         status:   'cr229_requeststatus',
         user:     'cr229_by',
@@ -1928,8 +1709,8 @@ button {
       entitySetName: 'cr229_incidents',
       entityLogicalName: 'cr229_incident',
       columns: {
-        id:       'cr229_incidentid',
-        activity: '',
+        id:       'cr229_name',
+        activity: 'cr229_incidenttype',
         dateTime: 'createdon',
         status:   'cr229_incidentstatus',
         user:     'cr229_by',
@@ -1939,8 +1720,8 @@ button {
       entitySetName: 'cr229_itsm_assets',
       entityLogicalName: 'cr229_itsm_asset',
       columns: {
-        id:       'cr229_itsm_assetid',
-        activity: 'cr229_ciname',
+        id:       'cr229_newcolumn',
+        activity: 'ma_assettypee',
         dateTime: 'createdon',
         status:   'ma_cistatus',
         user:     'createdby',
@@ -1950,8 +1731,8 @@ button {
       entitySetName: 'cr229_changes',
       entityLogicalName: 'cr229_change',
       columns: {
-        id:       'cr229_changeid',
-        activity: 'cr229_name',
+        id:       'cr229_name',
+        activity: 'cr229_changetype',
         dateTime: 'createdon',
         status:   'cr229_changestatus',
         user:     'cr229_by',
@@ -1961,22 +1742,11 @@ button {
       entitySetName: 'cr229_problems',
       entityLogicalName: 'cr229_problem',
       columns: {
-        id:       'cr229_problemid',
-        activity: 'cr229_name',
+        id:       'cr229_name',
+        activity: 'cr229_problemtype',
         dateTime: 'createdon',
         status:   'cr229_problemstatus',
         user:     'cr229_by',
-      },
-    },
-    'Client Request': {
-      entitySetName: 'ma_clientrequests',
-      entityLogicalName: 'ma_clientrequest',
-      columns: {
-        id:       'versionnumber',
-        activity: 'ma_email',
-        dateTime: 'createdon',
-        status:   'ma_status',
-        user:     'createdby',
       },
     },
   };
@@ -2282,9 +2052,9 @@ button {
         totalChanges:         { value: chgTotal, awaiting: chgPending },
         totalProblems:        { value: prbTotal, critical: 0 },
       },
-      serviceRequests: { pending: srPending,  completed: srClose },
-      incidents:       { open: incOpen,       closed: incClose },
-      problems:        { open: prbOpen,       closed: prbClose },
+      serviceRequests: { pending: srPending,  completed: srClose, open: srOpen ?? 0 },
+      incidents:       { open: incOpen,       closed: incClose, pending: incPending ?? 0 },
+      problems:        { open: prbOpen,       closed: prbClose, pending: prbPending ?? 0 },
       ciHealth:        { active: ciActive,    maintenance: ciMaintenance, retired: ciRetired },
       recentActivities: [],
       totalActivities: srTotal + incTotal + chgTotal + prbTotal + ciTotal,
@@ -2430,33 +2200,45 @@ button {
 
     document.getElementById('srStats').innerHTML = `
       <div class="chart-stat">
-        <span class="chart-stat-value">${serviceRequests.pending}</span>
+        <span class="chart-stat-value">${serviceRequests.open ?? 0 }</span>
+        <span class="chart-stat-label open">Open</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-value">${serviceRequests.pending ?? 0}</span>
         <span class="chart-stat-label pending">Pending</span>
       </div>
       <div class="chart-stat">
-        <span class="chart-stat-value">${serviceRequests.completed}</span>
+        <span class="chart-stat-value">${serviceRequests.completed ?? 0}</span>
         <span class="chart-stat-label completed">Completed</span>
       </div>
     `;
 
     document.getElementById('incStats').innerHTML = `
       <div class="chart-stat">
-        <span class="chart-stat-value">${incidents.open}</span>
+        <span class="chart-stat-value">${incidents.open ?? 0}</span>
         <span class="chart-stat-label open">Open</span>
       </div>
       <div class="chart-stat">
-        <span class="chart-stat-value">${incidents.closed}</span>
+        <span class="chart-stat-value">${incidents.pending ?? 0}</span>
+        <span class="chart-stat-label pending">Pending</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-value">${incidents.closed ?? 0}</span>
         <span class="chart-stat-label closed">Closed</span>
       </div>
     `;
 
     document.getElementById('prbStats').innerHTML = `
       <div class="chart-stat">
-        <span class="chart-stat-value">${problems.open}</span>
+        <span class="chart-stat-value">${problems.open ?? 0}</span>
         <span class="chart-stat-label open">Open</span>
       </div>
       <div class="chart-stat">
-        <span class="chart-stat-value">${problems.closed}</span>
+        <span class="chart-stat-value">${problems.pending ?? 0}</span>
+        <span class="chart-stat-label pending">Pending</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-value">${problems.closed ?? 0}</span>
         <span class="chart-stat-label closed">Closed</span>
       </div>
     `;
@@ -2470,17 +2252,18 @@ button {
     const { serviceRequests, incidents, problems } = dashboardData;
     const maxScale = 150;
 
-    renderBarChart('srBarChart', serviceRequests.pending, serviceRequests.completed, maxScale);
-    renderBarChart('incBarChart', incidents.open, incidents.closed, maxScale);
-    renderBarChart('prbBarChart', problems.open, problems.closed, maxScale);
+    renderBarChart('srBarChart', serviceRequests.open, serviceRequests.pending, serviceRequests.completed, maxScale);
+    renderBarChart('incBarChart', incidents.open, incidents.pending, incidents.closed, maxScale);
+    renderBarChart('prbBarChart', problems.open, problems.pending, problems.closed, maxScale);
   }
 
-  function renderBarChart(containerId, primaryVal, secondaryVal, maxScale) {
+  function renderBarChart(containerId, primaryVal, secondaryVal, tertiaryVal, maxScale) {
     const container = document.getElementById(containerId);
     const yLabels = [150, 120, 90, 60, 30, 0];
 
     const primaryHeight = (primaryVal / maxScale) * 100;
     const secondaryHeight = (secondaryVal / maxScale) * 100;
+    const tertiaryHeight = (tertiaryVal / maxScale) * 100;
 
     container.innerHTML = `
       <div class="bar-chart-y-axis">
@@ -2492,12 +2275,16 @@ button {
         </div>
         <div class="bar-chart-bars">
           <div class="bar-group">
-            <span class="bar-value-label">${primaryVal}</span>
+            <span class="bar-value-label">${primaryVal?? 0}</span>
             <div class="bar primary" style="height: 0%" data-height="${primaryHeight}%"></div>
           </div>
           <div class="bar-group">
-            <span class="bar-value-label">${secondaryVal}</span>
+            <span class="bar-value-label">${secondaryVal ?? 0}</span>
             <div class="bar secondary" style="height: 0%" data-height="${secondaryHeight}%"></div>
+          </div>
+          <div class="bar-group">
+            <span class="bar-value-label">${tertiaryVal ?? 0}</span>
+            <div class="bar tertiary" style="height: 0%" data-height="${tertiaryHeight}%"></div>
           </div>
         </div>
       </div>
@@ -2659,7 +2446,6 @@ button {
             <td><span class="status-badge ${statusClass}">${a.status}</span></td>
             <td>
               <div class="user-cell">
-                <div class="user-avatar-sm"></div>
                 ${a.user}
               </div>
             </td>
@@ -2794,19 +2580,6 @@ button {
     overlay.classList.remove('visible');
   }
 
-  // ============================================================
-  //  SIDEBAR INTERACTION
-  // ============================================================
-
-  function bindSidebar() {
-    const items = document.querySelectorAll('.sidebar-item');
-    items.forEach(item => {
-      item.addEventListener('click', () => {
-        items.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-      });
-    });
-  }
 
   // ============================================================
   //  INIT
@@ -2814,7 +2587,6 @@ button {
 
   document.addEventListener('DOMContentLoaded', () => {
     loadData();
-    bindSidebar();
   });
 
 })();
