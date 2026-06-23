@@ -1995,7 +1995,6 @@ button {
 
   /**
    * Attempts to load all dashboard data (KPIs, chart values) from Dataverse.
-   * Populates the dashboardData object in the same shape as data.json
    * so all existing render functions work without modification.
    */
   async function loadDashboardFromDataverse() {
@@ -2081,7 +2080,7 @@ button {
 
   /**
    * Main data loading function.
-   * Tries Dataverse first, then falls back to local data.json,
+   * Tries Dataverse first, then falls back to local empty dashboard data,
    * and finally to an empty dataset if both fail.
    */
   async function loadData() {
@@ -2089,16 +2088,9 @@ button {
       await loadDashboardFromDataverse();
       console.info('Dashboard data loaded from Dataverse.');
     } catch (err) {
-      console.warn('Dataverse load failed, trying local data.json:', err.message);
+      console.warn('Dataverse load failed, falling back to empty data object:', err.message);
       showErrorModal(`Dashboard load failed:\n${err.message}\n\nFalling back to local data.`);
-      try {
-        const res = await fetch('data.json');
-        dashboardData = await res.json();
-        console.info('Dashboard data loaded from local data.json.');
-      } catch (err2) {
-        console.warn('Local data.json also unavailable:', err2.message);
-        dashboardData = createEmptyDashboardData();
-      }
+      dashboardData = createEmptyDashboardData();
     }
     renderAll();
   }
