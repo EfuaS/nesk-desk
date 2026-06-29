@@ -1,46 +1,4 @@
 # Walkthrough: File Merge & Dataverse FetchXML Integration
-
-## Summary of Changes
-
-Consolidated the NextDesk dashboard from 3 files (`index.html`, `styles.css`, `script.js`) into a **single `index.html`** file ready for Power Apps web resource deployment, and integrated **Dataverse FetchXML** data fetching for the Activities table, KPI cards, and charts.
-
----
-
-## Files Changed
-
-| File | Action | Details |
-|------|--------|---------|
-| [index.html](file:///c:/Users/efuas/Work/Accede/next-desk/index.html) | **Modified (overwritten)** | All CSS and JS merged inline; Dataverse integration added |
-| `styles.css` | **Deleted** | Contents moved to `<style>` block in index.html |
-| `script.js` | **Deleted** | Contents moved to `<script>` block in index.html |
-| [data.json](file:///c:/Users/efuas/Work/Accede/next-desk/data.json) | **Kept** | Used as fallback data source for local development |
-
----
-
-## Architecture: Data Flow
-
-```mermaid
-graph TD
-    A["Page Load"] --> B["loadData()"]
-    B --> C{"Try loadDashboardFromDataverse()"}
-    C -->|Success| D["dashboardData populated from Dataverse"]
-    C -->|Fail| E{"Try fetch data.json"}
-    E -->|Success| F["dashboardData from local JSON"]
-    E -->|Fail| G["dashboardData = empty defaults"]
-    D --> H["renderAll()"]
-    F --> H
-    G --> H
-    H --> I["renderKPICards()"]
-    H --> J["renderChartStats() + renderBarCharts()"]
-    H --> K["renderDonutChart()"]
-    H --> L["renderActivitiesTable()"]
-    L --> M{"fetchActivitiesFromDataverse(tabConfig)"}
-    M -->|Success| N["Render Dataverse records"]
-    M -->|Fail| O["Fallback to local JSON filtered by tab"]
-```
-
----
-
 ## Key New Functions
 
 ### Dataverse Utilities
@@ -90,17 +48,6 @@ Numeric option-set values for FetchXML filter conditions:
 
 - **General** (SR, Incident, Problem, Change): Open=`497700000`, Pending=`497700001`, Close=`497700002`
 - **CI**: Active=`124520000`, Maintenance=`124520001`, Retired=`124520002`
-
----
-
-## UI Changes
-
-- **"All" tab removed** from Recent Activities — each tab now fetches from its dedicated Dataverse table
-- **"Service Requests" is the default active tab**
-- **Status filter dropdown** updated with Dataverse status values (Open, Pending, Close, etc.)
-- **New CSS classes** for Dataverse status badges: `.status-badge.open`, `.status-badge.close`, `.status-badge.active`, `.status-badge.maintenance`, `.status-badge.retired`
-- **Race condition protection** via `currentFetchId` counter — prevents stale data from rendering when tabs are switched rapidly
-- **Date filter** now uses `new Date()` (current time) instead of hardcoded reference date
 
 ---
 
