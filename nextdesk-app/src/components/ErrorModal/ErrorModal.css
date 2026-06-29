@@ -1,0 +1,92 @@
+/* ===================================================================
+ * ErrorModal.css — Error popup modal overlay
+ *
+ * Centered modal with red icon header, scrollable error body,
+ * and dismiss button. Auto-dismisses after 8 seconds.
+ * =================================================================== */
+
+.error-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.error-modal-overlay.visible {
+  display: flex;
+}
+
+.error-modal {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 24px 28px;
+  max-width: 520px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease;
+}
+
+.error-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.error-modal-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.error-modal-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.error-modal-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.error-modal-body {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+  background: #F9FAFB;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.error-modal-close-btn {
+  display: block;
+  margin-left: auto;
+  padding: 8px 20px;
+  background: var(--heading-color);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.error-modal-close-btn:hover {
+  background: #374151;
+}

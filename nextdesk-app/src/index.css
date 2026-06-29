@@ -1,0 +1,169 @@
+/* ===================================================================
+ * index.css — Global Styles & Design Tokens
+ * 
+ * Contains:
+ *   1. Google Fonts import (Sora)
+ *   2. CSS reset / base styles
+ *   3. CSS custom properties (design tokens)
+ *   4. Layout shell (.app-layout, .main-content)
+ *   5. Keyframe animations (fadeInUp, fadeIn, spin)
+ *   6. Responsive breakpoints
+ *   7. Scrollbar styling
+ * =================================================================== */
+
+/* ===== RESET & BASE ===== */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap");
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Core colors */
+  --navbar-bg: #1a1d23;
+  --main-bg: #f3f4f8;
+  --heading-color: #111827;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+
+  /* Accent colors */
+  --blue-primary: #1a6ef5;
+  --blue-dark: #2563eb;
+  --green-primary: #22c55e;
+  --green-dark: #059669;
+  --red-primary: #ef4444;
+  --red-dark: #dc2626;
+  --yellow-primary: #ef4444;
+  --yellow-dark: #d97706;
+  --purple-primary: #8b5cf6;
+  --purple-dark: #7c3aed;
+  --teal-primary: #14b8a6;
+  --orange-primary: #f97316;
+
+  /* KPI card top-border colors */
+  --kpi-border-blue: #1a6ef5;
+
+  /* Sidebar */
+  --sidebar-hover-bg: #f3f4f6;
+
+  /* Navbar */
+  --navbar-height: 56px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Sora", sans-serif;
+  background: var(--main-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: "Sora", sans-serif;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ===== LAYOUT ===== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: var(--navbar-height);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  padding: 28px 32px 40px;
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

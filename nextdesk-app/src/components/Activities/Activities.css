@@ -1,0 +1,317 @@
+/* ===================================================================
+ * Activities.css — Tabbed activities table section
+ *
+ * Covers: section container, header, tabs (pill-style active state),
+ * filter dropdowns, data table, badges, user cells, view action,
+ * and footer.
+ * =================================================================== */
+
+/* ── Section container ───────────────────────── */
+.activities-section {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  animation: fadeInUp 0.5s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+/* ── Header ──────────────────────────────────── */
+.activities-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.activities-header-left h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-bottom: 4px;
+}
+
+.activities-header-left p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.activities-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  color: var(--text-primary);
+  background: #F8FAFC;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.activities-refresh-btn:hover {
+  background: var(--sidebar-hover-bg);
+}
+
+.activities-refresh-btn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+/* ── Tabs ────────────────────────────────────── */
+.activities-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 10px;
+  padding-bottom: 0;
+}
+
+.activity-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.activity-tab {
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+  white-space: nowrap;
+  position: relative;
+  bottom: -1px;
+}
+
+.activity-tab:hover {
+  color: var(--text-primary);
+}
+
+.activity-tab.active {
+  color: #fff;
+  background: #1E3A5F;
+  border-radius: var(--radius-full);
+  border-bottom-color: transparent;
+  font-weight: 500;
+  padding: 6px 10px;
+  margin: 4px 4px 4px 0;
+}
+
+/* ── Filters ─────────────────────────────────── */
+.activity-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  padding: 0 8px;
+}
+
+.activity-filter-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.activity-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.activity-filter-btn:hover {
+  background: var(--sidebar-hover-bg);
+}
+
+.activity-filter-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Filter dropdowns ────────────────────────── */
+.filter-dropdown-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-dropdown-icon {
+  position: absolute;
+  left: 8px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 5px 26px 5px 28px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 8px center;
+  color: var(--text-secondary);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-select:hover {
+  border-color: #D1D5DB;
+}
+
+.filter-select:focus {
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-select.active-filter {
+  border-color: var(--blue-primary);
+  color: var(--blue-primary);
+  background-color: #EFF6FF;
+}
+
+/* ── Table ────────────────────────────────────── */
+.activities-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+}
+
+.activities-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid #F1F5F9;
+  white-space: nowrap;
+}
+
+.activities-table tbody tr {
+  transition: background 0.15s;
+}
+
+.activities-table tbody tr:nth-child(even) {
+  background: #F8FAFC;
+}
+
+.activities-table tbody tr:hover {
+  background: #EFF6FF;
+}
+
+.activities-table tbody td {
+  padding: 14px 16px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.activities-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Activity badge ──────────────────────────── */
+.activity-badge {
+  display: block;
+  text-align: center;
+  padding: 8px 0px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #F1F5F9;
+  color: #64748B;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* ── Status badge ────────────────────────────── */
+.status-badge {
+  display: block;
+  text-align: center;
+  padding: 8px 0px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge.in-progress  { color: #A16207; background: #FEF9C3; }
+.status-badge.pending      { color: #EA580C; background: #FFF7ED; }
+.status-badge.completed    { color: #065f46; background: #F0FDF4; }
+.status-badge.approved     { color: #065f46; background: #F0FDF4; }
+.status-badge.open         { color: #2563EB; background: #EFF6FF; }
+.status-badge.close        { color: #065f46; background: #F0FDF4; }
+.status-badge.active       { color: #065f46; background: #F0FDF4; }
+.status-badge.maintenance  { color: #A16207; background: #FEF9C3; }
+.status-badge.retired      { color: #6B7280; background: #F3F4F6; }
+
+/* ── User cell ───────────────────────────────── */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.user-avatar-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #d1d5db;
+  flex-shrink: 0;
+}
+
+/* ── View action link ────────────────────────── */
+.view-action {
+  color: var(--blue-primary);
+  font-weight: 500;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.view-action:hover {
+  text-decoration: underline;
+  color: var(--blue-dark);
+  background: #eff6ff;
+}
+
+/* ── Footer ──────────────────────────────────── */
+.activities-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 16px 0;
+}
+
+.activities-footer-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}

@@ -1,0 +1,56 @@
+/* ===================================================================
+ * Loader.css — Page-level and table-level loading overlays
+ *
+ * Semi-transparent overlays with centered spinner and optional text.
+ * =================================================================== */
+
+.page-loader-overlay {
+  display: none;
+  position: fixed;
+  top: var(--navbar-height);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(243, 244, 248, 0.82);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.page-loader-overlay.visible {
+  display: flex;
+}
+
+.table-loader-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(1px);
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+.table-loader-overlay.visible {
+  display: flex;
+}
+
+.loader-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3.5px solid var(--border-color);
+  border-top-color: var(--blue-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.loader-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}

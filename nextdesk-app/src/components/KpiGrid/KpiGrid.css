@@ -1,0 +1,133 @@
+/* ===================================================================
+ * KpiGrid.css — KPI card grid and individual card styles
+ *
+ * 5-column grid with colored top borders, hover lift, and
+ * staggered fadeInUp animations.
+ * =================================================================== */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  border-top: 2.5px solid transparent;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Top-border color per module ─────────────── */
+.kpi-card.service  { border-top-color: var(--kpi-border-blue); }
+.kpi-card.incident { border-top-color: var(--kpi-border-blue); }
+.kpi-card.ci       { border-top-color: var(--kpi-border-blue); }
+.kpi-card.change   { border-top-color: var(--kpi-border-blue); }
+.kpi-card.problem  { border-top-color: var(--kpi-border-blue); }
+
+/* ── Staggered animation delays ──────────────── */
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.1s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.2s; }
+.kpi-card:nth-child(5) { animation-delay: 0.25s; }
+
+/* ── Card header (icon + title) ──────────────── */
+.kpi-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.kpi-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-card.service .kpi-icon  { background: #d1fae5; color: #059669; }
+.kpi-card.incident .kpi-icon { background: #fee2e2; color: #dc2626; }
+.kpi-card.ci .kpi-icon       { background: #dbeafe; color: #2563eb; }
+.kpi-card.change .kpi-icon   { background: #fef3c7; color: #d97706; }
+.kpi-card.problem .kpi-icon  { background: #ede9fe; color: #7c3aed; }
+
+.kpi-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.kpi-title {
+  font-size: 0.79rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+/* ── Value row (big number + change badge) ───── */
+.kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--heading-color);
+  line-height: 1;
+}
+
+.kpi-change {
+  font-size: 0.75rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.kpi-change.up       { color: var(--green-primary); }
+.kpi-change.down     { color: var(--red-primary); }
+.kpi-change.awaiting { color: var(--yellow-primary); }
+.kpi-change.critical { color: var(--red-primary); }
+
+/* ── Link ────────────────────────────────────── */
+.kpi-link {
+  font-size: 0.78rem;
+  color: var(--blue-primary);
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.kpi-link:hover {
+  color: var(--blue-dark);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 1400px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1024px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+}
